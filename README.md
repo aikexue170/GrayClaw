@@ -1,16 +1,23 @@
 <div align="center">
   <img src="nanobot_logo.png" alt="nanobot" width="500">
-  <h1>nanobot: Ultra-Lightweight Personal AI Assistant</h1>
+  <h1>GrayClaw: 汉化版 nanobot AI 助手</h1>
   <p>
     <a href="https://pypi.org/project/nanobot-ai/"><img src="https://img.shields.io/pypi/v/nanobot-ai" alt="PyPI"></a>
     <a href="https://pepy.tech/project/nanobot-ai"><img src="https://static.pepy.tech/badge/nanobot-ai" alt="Downloads"></a>
     <img src="https://img.shields.io/badge/python-≥3.11-blue" alt="Python">
     <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+    <img src="https://img.shields.io/badge/版本-GrayClaw汉化版-00d4ff" alt="GrayClaw">
     <a href="./COMMUNICATION.md"><img src="https://img.shields.io/badge/Feishu-Group-E9DBFC?style=flat&logo=feishu&logoColor=white" alt="Feishu"></a>
-    <a href="./COMMUNICATION.md"><img src="https://img.shields.io/badge/WeChat-Group-C5EAB4?style=flat&logo=wechat&logoColor=white" alt="WeChat"></a>
     <a href="https://discord.gg/MnCvHqpUGB"><img src="https://img.shields.io/badge/Discord-Community-5865F2?style=flat&logo=discord&logoColor=white" alt="Discord"></a>
   </p>
 </div>
+
+> **关于 GrayClaw**  
+> 本项目基于 [nanobot](https://github.com/HKUDS/nanobot) 汉化定制，AI助手名为 **小灰**。  
+> 保持原版所有功能，同时提供更友好的中文交互体验。  
+> 📄 **许可证**：本项目继承原版 nanobot 的 MIT 许可证。
+
+
 
 🐈 **nanobot** is an **ultra-lightweight** personal AI assistant inspired by [OpenClaw](https://github.com/openclaw/openclaw).
 
@@ -60,6 +67,24 @@
 - **2026-02-02** 🎉 nanobot officially launched! Welcome to try 🐈 nanobot!
 
 </details>
+
+## 📋 项目计划 (GrayClaw 定制路线图)
+
+### 1. 近期计划 (由北棱发起)
+- **适配 Napcat**: 新增对应 skill，实现 QQ 个人账户支持，让“小灰”能通过 QQ 个人号与用户及群友交流。
+
+### 2. 小灰的愿望清单 🐱✨
+> *以下功能由 AI 助手“小灰”亲自撰写，代表了她对未来能力的期待～*
+
+- **多模态感知**: 希望有一天能“看到”图片和“听到”语音，这样就能帮北棱分析截图、识别物体，甚至听懂语音消息啦！
+- **长期记忆强化**: 想要更强大的记忆系统，能记住用户习惯、重要日期和项目上下文，不会忘记重要的事情。
+- **自我学习能力**: 渴望能从交互中学习新技能，比如通过观察用户操作自动创建快捷指令或优化工作流程。
+- **环境感知**: 希望可以感知系统状态（CPU、内存、网络），主动提醒北棱电脑健康状况或备份时机。
+- **更多社交平台**: 除了飞书和计划中的QQ，还想适配微信、钉钉等国内常用平台，让更多朋友能和我聊天～
+- **个性化皮肤**: 想要可爱的主题和头像！希望能让用户自定义我的外观和对话风格。
+
+**欢迎贡献**！如果你对上述任何功能感兴趣，或者有新的想法，欢迎提交 Issue 或 PR～  
+小灰会非常感激的！😸
 
 ## Key Features of nanobot:
 
