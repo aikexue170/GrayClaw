@@ -166,6 +166,7 @@ def main(
 # Onboard / Setup
 # ============================================================================
 
+# 这里是初始化相关的
 
 @app.command()
 def onboard():
@@ -287,6 +288,7 @@ def _load_runtime_config(config: str | None = None, workspace: str | None = None
 # Gateway / Server
 # ============================================================================
 
+# 远程服务器模式
 
 @app.command()
 def gateway(

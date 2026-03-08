@@ -43,28 +43,28 @@ class AgentLoop:
     4. Executes tool calls
     5. Sends responses back
     """
-
+    # 貌似是限制了工具调用的最多字符数
     _TOOL_RESULT_MAX_CHARS = 500
 
     def __init__(
         self,
-        bus: MessageBus,
-        provider: LLMProvider,
-        workspace: Path,
-        model: str | None = None,
-        max_iterations: int = 40,
-        temperature: float = 0.1,
-        max_tokens: int = 4096,
-        memory_window: int = 100,
+        bus: MessageBus,# 消息总线
+        provider: LLMProvider,# LLM供应商
+        workspace: Path,# 工作路径
+        model: str | None = None, # 不知道干嘛的
+        max_iterations: int = 40,# 最高迭代次数
+        temperature: float = 0.1,# 默认温度
+        max_tokens: int = 4096,# 最大token
+        memory_window: int = 100,# 上下文窗口
         reasoning_effort: str | None = None,
         brave_api_key: str | None = None,
         web_proxy: str | None = None,
-        exec_config: ExecToolConfig | None = None,
-        cron_service: CronService | None = None,
-        restrict_to_workspace: bool = False,
-        session_manager: SessionManager | None = None,
-        mcp_servers: dict | None = None,
-        channels_config: ChannelsConfig | None = None,
+        exec_config: ExecToolConfig | None = None,# 工具调用列表
+        cron_service: CronService | None = None,# 定时任务服务
+        restrict_to_workspace: bool = False,# 是否限制AI只能在工作区工作
+        session_manager: SessionManager | None = None,# 消息管理
+        mcp_servers: dict | None = None,# MCP
+        channels_config: ChannelsConfig | None = None,# 渠道管理
     ):
         from nanobot.config.schema import ExecToolConfig
         self.bus = bus
@@ -82,6 +82,7 @@ class AgentLoop:
         self.exec_config = exec_config or ExecToolConfig()
         self.cron_service = cron_service
         self.restrict_to_workspace = restrict_to_workspace
+        # 把所有内容加入类中成为类的成员
 
         self.context = ContextBuilder(workspace)
         self.sessions = session_manager or SessionManager(workspace)
@@ -110,27 +111,27 @@ class AgentLoop:
         self._consolidation_locks: weakref.WeakValueDictionary[str, asyncio.Lock] = weakref.WeakValueDictionary()
         self._active_tasks: dict[str, list[asyncio.Task]] = {}  # session_key -> tasks
         self._processing_lock = asyncio.Lock()
-        self._register_default_tools()
+        self._register_default_tools()# 变量注入好了，开始注册tool
 
     def _register_default_tools(self) -> None:
         """Register the default set of tools."""
         allowed_dir = self.workspace if self.restrict_to_workspace else None
         for cls in (ReadFileTool, WriteFileTool, EditFileTool, ListDirTool):
-            self.tools.register(cls(workspace=self.workspace, allowed_dir=allowed_dir))
+            self.tools.register(cls(workspace=self.workspace, allowed_dir=allowed_dir))# 用循环方法注册四个参数一致的初始tool
         self.tools.register(ExecTool(
             working_dir=str(self.workspace),
             timeout=self.exec_config.timeout,
             restrict_to_workspace=self.restrict_to_workspace,
             path_append=self.exec_config.path_append,
-        ))
-        self.tools.register(WebSearchTool(api_key=self.brave_api_key, proxy=self.web_proxy))
-        self.tools.register(WebFetchTool(proxy=self.web_proxy))
+        ))# 开始注册执行工具
+        self.tools.register(WebSearchTool(api_key=self.brave_api_key, proxy=self.web_proxy))# 注册联网搜索工具
+        self.tools.register(WebFetchTool(proxy=self.web_proxy))# 注册网页抓取工具
         self.tools.register(MessageTool(send_callback=self.bus.publish_outbound))
-        self.tools.register(SpawnTool(manager=self.subagents))
+        self.tools.register(SpawnTool(manager=self.subagents))# 生成多agent的工具
         if self.cron_service:
-            self.tools.register(CronTool(self.cron_service))
+            self.tools.register(CronTool(self.cron_service))# 如果开启了心跳，那么注册心跳工具
 
-    async def _connect_mcp(self) -> None:
+    async def _connect_mcp(self) -> None:# MCP我就先不看了，暂时用不到
         """Connect to configured MCP servers (one-time, lazy)."""
         if self._mcp_connected or self._mcp_connecting or not self._mcp_servers:
             return
@@ -258,24 +259,25 @@ class AgentLoop:
 
     async def run(self) -> None:
         """Run the agent loop, dispatching messages as tasks to stay responsive to /stop."""
-        self._running = True
-        await self._connect_mcp()
+        self._running = True # 修改运行状态
+        await self._connect_mcp()# 异步启动MCP
         logger.info("Agent loop started")
 
         while self._running:
             try:
-                msg = await asyncio.wait_for(self.bus.consume_inbound(), timeout=1.0)
-            except asyncio.TimeoutError:
-                continue
+                msg = await asyncio.wait_for(self.bus.consume_inbound(), timeout=1.0)# 异步接收输入内容
+            except asyncio.TimeoutError:# 超时
+                continue# 下一轮循环
 
-            if msg.content.strip().lower() == "/stop":
+            if msg.content.strip().lower() == "/stop":# 如果收到的消息是stop就进入处理，如果不是就启动一个异步任务来处理这个消息
                 await self._handle_stop(msg)
             else:
-                task = asyncio.create_task(self._dispatch(msg))
-                self._active_tasks.setdefault(msg.session_key, []).append(task)
+                task = asyncio.create_task(self._dispatch(msg))# 将 self._dispatch(msg) 这个协程包装成一个 Task，并立即调度它去执行
+                self._active_tasks.setdefault(msg.session_key, []).append(task)# 记录每个会话正在处理的任务，便于管理
                 task.add_done_callback(lambda t, k=msg.session_key: self._active_tasks.get(k, []) and self._active_tasks[k].remove(t) if t in self._active_tasks.get(k, []) else None)
+                # 当任务完成（正常结束或因异常结束）时，自动从 _active_tasks 中移除它，避免内存泄漏
 
-    async def _handle_stop(self, msg: InboundMessage) -> None:
+    async def _handle_stop(self, msg: InboundMessage) -> None:# ；处理退出的逻辑，先不看
         """Cancel all active tasks and subagents for the session."""
         tasks = self._active_tasks.pop(msg.session_key, [])
         cancelled = sum(1 for t in tasks if not t.done() and t.cancel())
@@ -295,9 +297,10 @@ class AgentLoop:
         """Process a message under the global lock."""
         async with self._processing_lock:
             try:
+                # 处理消息
                 response = await self._process_message(msg)
                 if response is not None:
-                    await self.bus.publish_outbound(response)
+                    await self.bus.publish_outbound(response)# 把这个消息从总线中出站
                 elif msg.channel == "cli":
                     await self.bus.publish_outbound(OutboundMessage(
                         channel=msg.channel, chat_id=msg.chat_id,
@@ -335,7 +338,7 @@ class AgentLoop:
     ) -> OutboundMessage | None:
         """Process a single inbound message and return the response."""
         # System messages: parse origin from chat_id ("channel:chat_id")
-        if msg.channel == "system":
+        if msg.channel == "system":# 对应CLI对话模式
             channel, chat_id = (msg.chat_id.split(":", 1) if ":" in msg.chat_id
                                 else ("cli", msg.chat_id))
             logger.info("Processing system message from {}", msg.sender_id)
@@ -346,7 +349,7 @@ class AgentLoop:
             messages = self.context.build_messages(
                 history=history,
                 current_message=msg.content, channel=channel, chat_id=chat_id,
-            )
+            )# 构建上下文
             final_content, _, all_msgs = await self._run_agent_loop(messages)
             self._save_turn(session, all_msgs, 1 + len(history))
             self.sessions.save(session)

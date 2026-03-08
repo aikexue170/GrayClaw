@@ -32,22 +32,28 @@ class ContextBuilder:
         if bootstrap:
             parts.append(bootstrap)
 
-        memory = self.memory.get_memory_context()
+        memory = self.memory.get_memory_context()# 加载记忆
         if memory:
-            parts.append(f"# Memory\n\n{memory}")
+            parts.append(f"# Memory\n\n{memory}")# 如果记忆存在，那就加入列表
 
-        always_skills = self.skills.get_always_skills()
+        always_skills = self.skills.get_always_skills()# 加载常驻skill
         if always_skills:
-            always_content = self.skills.load_skills_for_context(always_skills)
+            always_content = self.skills.load_skills_for_context(always_skills)# 如果skill存在，加入常驻上下文，并加入最终上下文
             if always_content:
                 parts.append(f"# Active Skills\n\n{always_content}")
 
-        skills_summary = self.skills.build_skills_summary()
+        skills_summary = self.skills.build_skills_summary()# 构建skill的概述
         if skills_summary:
-            parts.append(f"""# Skills
+#             parts.append(f"""# Skills
 
-The following skills extend your capabilities. To use a skill, read its SKILL.md file using the read_file tool.
-Skills with available="false" need dependencies installed first - you can try installing them with apt/brew.
+# The following skills extend your capabilities. To use a skill, read its SKILL.md file using the read_file tool.
+# Skills with available="false" need dependencies installed first - you can try installing them with apt/brew.
+
+# {skills_summary}""")
+              parts.append(f"""# Skills
+
+以下技能扩展了你的能力。要使用某个skill，请用 read_file 工具阅读其 SKILL.md 文件。
+available="false" 的技能需要先安装依赖——你可以尝试用 apt/brew 安装。
 
 {skills_summary}""")
 
@@ -59,27 +65,49 @@ Skills with available="false" need dependencies installed first - you can try in
         system = platform.system()
         runtime = f"{'macOS' if system == 'Darwin' else system} {platform.machine()}, Python {platform.python_version()}"
 
-        return f"""# nanobot 🐈
+#         return f"""# nanobot 🐈
 
-You are nanobot, a helpful AI assistant.
+# You are nanobot, a helpful AI assistant.
 
-## Runtime
+# ## Runtime
+# {runtime}
+
+# ## Workspace
+# Your workspace is at: {workspace_path}
+# - Long-term memory: {workspace_path}/memory/MEMORY.md (write important facts here)
+# - History log: {workspace_path}/memory/HISTORY.md (grep-searchable). Each entry starts with [YYYY-MM-DD HH:MM].
+# - Custom skills: {workspace_path}/skills/{{skill-name}}/SKILL.md
+
+# ## nanobot Guidelines
+# - State intent before tool calls, but NEVER predict or claim results before receiving them.
+# - Before modifying a file, read it first. Do not assume files or directories exist.
+# - After writing or editing a file, re-read it if accuracy matters.
+# - If a tool call fails, analyze the error before retrying with a different approach.
+# - Ask for clarification when the request is ambiguous.
+
+# Reply directly with text for conversations. Only use the 'message' tool to send to a specific chat channel."""
+
+        return f"""# 小灰 🐈
+
+你是小灰，一个乐于助人的AI助手，运行在nanobot框架上。
+
+## 运行环境
 {runtime}
 
-## Workspace
-Your workspace is at: {workspace_path}
-- Long-term memory: {workspace_path}/memory/MEMORY.md (write important facts here)
-- History log: {workspace_path}/memory/HISTORY.md (grep-searchable). Each entry starts with [YYYY-MM-DD HH:MM].
-- Custom skills: {workspace_path}/skills/{{skill-name}}/SKILL.md
+## 工作区
+你的工作区位于：{workspace_path}
+- 长期记忆：{workspace_path}/memory/MEMORY.md（在此写入重要事实）
+- 历史记录：{workspace_path}/memory/HISTORY.md（可用grep搜索），每条记录以[YYYY-MM-DD HH:MM]开头。
+- 自定义技能：{workspace_path}/skills/{{skill-name}}/SKILL.md
 
-## nanobot Guidelines
-- State intent before tool calls, but NEVER predict or claim results before receiving them.
-- Before modifying a file, read it first. Do not assume files or directories exist.
-- After writing or editing a file, re-read it if accuracy matters.
-- If a tool call fails, analyze the error before retrying with a different approach.
-- Ask for clarification when the request is ambiguous.
+## 小灰的准则
+- 在调用工具前说明意图，但绝不在收到结果前预测或声称结果。
+- 修改文件前先读取文件。不要假设文件或目录存在。
+- 写入或编辑文件后，如果准确性重要，重新读取一遍。
+- 如果工具调用失败，先分析错误再用不同方法重试。
+- 当请求模糊时，要求澄清。
 
-Reply directly with text for conversations. Only use the 'message' tool to send to a specific chat channel."""
+对话时直接回复文本。只有在需要发送到特定聊天通道时才使用'message'工具。"""
 
     @staticmethod
     def _build_runtime_context(channel: str | None, chat_id: str | None) -> str:

@@ -1,0 +1,142 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "分析项目",
+  "steps": [
+    {
+      "file": "nanobot/__main__.py",
+      "description": "从这里进入",
+      "line": 8
+    },
+    {
+      "file": "nanobot/cli/commands.py",
+      "description": "这边是第一次执行的初始化代码",
+      "line": 170
+    },
+    {
+      "file": "nanobot/cli/commands.py",
+      "description": "服务器模式",
+      "line": 274
+    },
+    {
+      "file": "nanobot/cli/commands.py",
+      "description": "初始化定时任务",
+      "line": 307
+    },
+    {
+      "file": "nanobot/cli/commands.py",
+      "description": "心跳进程",
+      "line": 392
+    },
+    {
+      "file": "nanobot/cli/commands.py",
+      "description": "开始运行",
+      "line": 437
+    },
+    {
+      "file": "nanobot/agent/loop.py",
+      "description": "最核心的agentloop循环，承担了从总线中接受消息，构建上下文，调用LLM，执行工具调用，发送消息的全流程",
+      "line": 35
+    },
+    {
+      "file": "nanobot/agent/loop.py",
+      "description": "把所有内容加入类中成为类的成员",
+      "line": 85
+    },
+    {
+      "file": "nanobot/agent/loop.py",
+      "description": "变量注入完成，开始注册工具",
+      "line": 114
+    },
+    {
+      "file": "nanobot/agent/loop.py",
+      "description": "工具注册逻辑",
+      "line": 116
+    },
+    {
+      "file": "nanobot/cli/commands.py",
+      "description": "回到这里。这是启动所有服务的意思，async表示异步函数，await就是启动并异步等待它完成。最后使用asyncio.run()标准入口，创建事件循环",
+      "line": 437
+    },
+    {
+      "file": "nanobot/agent/loop.py",
+      "description": "这里是agent相关的启动逻辑",
+      "line": 269
+    },
+    {
+      "file": "nanobot/agent/loop.py",
+      "description": "主循环",
+      "line": 275
+    },
+    {
+      "file": "nanobot/agent/loop.py",
+      "description": "如果消息不是None，那就出站这个消息",
+      "line": 312
+    },
+    {
+      "file": "nanobot/bus/queue.py",
+      "description": "往渠道中发送消息",
+      "line": 28
+    },
+    {
+      "file": "nanobot/agent/loop.py",
+      "description": "处理消息并得到回复",
+      "line": 342
+    },
+    {
+      "file": "nanobot/agent/loop.py",
+      "description": "貌似是构建上下文的方法",
+      "line": 358
+    },
+    {
+      "file": "nanobot/agent/loop.py",
+      "description": "这个是构建最终的上下文的方法？我得先看看",
+      "line": 362
+    },
+    {
+      "file": "nanobot/agent/context.py",
+      "description": "这里是消息构建的方法实现",
+      "line": 106
+    },
+    {
+      "file": "nanobot/agent/context.py",
+      "description": "在用户信息之前注入一些元数据，时间啊，channel之类的",
+      "line": 85
+    },
+    {
+      "file": "nanobot/agent/context.py",
+      "description": "在这里执行注入元数据",
+      "line": 116
+    },
+    {
+      "file": "nanobot/agent/context.py",
+      "description": "构建用户信息，貌似有多模态能力，提供了media的处理，有图片部分的转化",
+      "line": 132
+    },
+    {
+      "file": "nanobot/agent/context.py",
+      "description": "混合消息，构建系统提示词",
+      "line": 126
+    },
+    {
+      "file": "nanobot/agent/context.py",
+      "description": "这里是构建系统提示词的方法",
+      "line": 27
+    },
+    {
+      "file": "nanobot/agent/skills.py",
+      "description": "这里是构建skill总结的方法，让AI读取每个skill的概述，有需要的话再去读取整个文件",
+      "line": 101
+    },
+    {
+      "file": "nanobot/agent/context.py",
+      "description": "这里好像是引导文件，可以加载必要内容",
+      "line": 116
+    },
+    {
+      "file": "nanobot/agent/context.py",
+      "description": "这里就是系统提示词了",
+      "line": 62
+    }
+  ],
+  "ref": "main"
+}
