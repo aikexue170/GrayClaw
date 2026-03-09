@@ -21,7 +21,8 @@ from nanobot.agent.tools.message import MessageTool
 from nanobot.agent.tools.registry import ToolRegistry
 from nanobot.agent.tools.shell import ExecTool
 from nanobot.agent.tools.spawn import SpawnTool
-from nanobot.agent.tools.web import WebFetchTool, WebSearchTool
+from nanobot.agent.tools.web_reader import WebReaderTool
+# from nanobot.agent.tools.web import WebFetchTool, WebSearchTool  # 已移除，待替换
 from nanobot.bus.events import InboundMessage, OutboundMessage
 from nanobot.bus.queue import MessageBus
 from nanobot.providers.base import LLMProvider
@@ -124,8 +125,9 @@ class AgentLoop:
             restrict_to_workspace=self.restrict_to_workspace,
             path_append=self.exec_config.path_append,
         ))# 开始注册执行工具
-        self.tools.register(WebSearchTool(api_key=self.brave_api_key, proxy=self.web_proxy))# 注册联网搜索工具
-        self.tools.register(WebFetchTool(proxy=self.web_proxy))# 注册网页抓取工具
+        # self.tools.register(WebSearchTool(api_key=self.brave_api_key, proxy=self.web_proxy))# 注册联网搜索工具 - 已禁用
+        # self.tools.register(WebFetchTool(proxy=self.web_proxy))# 注册网页抓取工具 - 已禁用
+        self.tools.register(WebReaderTool(timeout=30))# 注册网页阅读器工具
         self.tools.register(MessageTool(send_callback=self.bus.publish_outbound))
         self.tools.register(SpawnTool(manager=self.subagents))# 生成多agent的工具
         if self.cron_service:

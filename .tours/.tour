@@ -1,6 +1,6 @@
 {
   "$schema": "https://aka.ms/codetour-schema",
-  "title": "分析项目",
+  "title": "初始化+消息构成",
   "steps": [
     {
       "file": "nanobot/__main__.py",
@@ -136,6 +136,16 @@
       "file": "nanobot/agent/context.py",
       "description": "这里就是系统提示词了",
       "line": 62
+    },
+    {
+      "file": "nanobot/agent/context.py",
+      "description": "这里是memory的入口",
+      "line": 35
+    },
+    {
+      "file": "nanobot/channels/base.py",
+      "description": "这是渠道的基类",
+      "line": 12
     }
   ],
   "ref": "main"
